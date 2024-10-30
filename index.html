@@ -1,48 +1,149 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <title>个人导航</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-    }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-    }
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    li {
-      margin: 10px 0;
-    }
-    a {
-      text-decoration: none;
-      color: #007BFF;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>多功能个人导航页</title>
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    transition: background-color 0.5s, color 0.5s;
+  }
+
+  body.dark-mode {
+    background-color: #333;
+    color: #f4f4f9;
+  }
+
+  header {
+    background-color: #007BFF;
+    padding: 1rem;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .search-bar input, .search-bar button {
+    padding: 0.5rem;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+  }
+
+  .search-bar button {
+    background-color: #0056b3;
+    color: white;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+
+  .theme-switcher label, .theme-switcher input {
+    cursor: pointer;
+  }
+
+  main {
+    padding: 2rem;
+    max-width: 800px;
+    margin: auto;
+  }
+
+  nav ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  nav li.category {
+    margin-bottom: 1rem;
+  }
+
+  nav li.category > ul {
+    margin-left: 1rem;
+  }
+
+  nav a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s;
+  }
+
+  nav a:hover {
+    color: #0056b3;
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>个人导航</h1>
-    <ul>
-      <li><a href="https://google.com" target="_blank">Google</a></li>
-      <li><a href="https://github.com" target="_blank">GitHub</a></li>
-      <li><a href="https://twitter.com" target="_blank">Twitter</a></li>
-      <!-- 添加更多链接 -->
-    </ul>
+<header>
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="搜索链接...">
+    <button onclick="searchLinks()">搜索</button>
   </div>
+  <div class="theme-switcher">
+    <label for="themeSwitch">切换主题</label>
+    <input type="checkbox" id="themeSwitch" />
+  </div>
+</header>
+<main>
+  <section id="weatherWidget">
+    <p>当前位置天气: <span id="weatherStatus">加载中...</span></p>
+  </section>
+  <nav>
+    <ul id="navList">
+      <li class="category">社交网络
+        <ul>
+          <li><a href="https://weibo.com" target="_blank">微博</a></li>
+          <li><a href="https://twitter.com" target="_blank">Twitter</a></li>
+        </ul>
+      </li>
+      <li class="category">学习资源
+        <ul>
+          <li><a href="https://w3school.com.cn" target="_blank">W3School</a></li>
+          <li><a href="https://developer.mozilla.org" target="_blank">MDN Web Docs</a></li>
+        </ul>
+      </li>
+      <!-- 更多类别... -->
+    </ul>
+  </nav>
+</main>
+
+<script>
+  document.getElementById('themeSwitch').addEventListener('change', function() {
+    document.body.classList.toggle('dark-mode');
+  });
+
+  function searchLinks() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const links = document.querySelectorAll('#navList a');
+
+    links.forEach(link => {
+      if (link.textContent.toLowerCase().includes(query)) {
+        link.style.display = '';
+      } else {
+        link.style.display = 'none';
+      }
+    });
+  }
+
+  // 假设使用OpenWeatherMap API获取天气
+  function getWeather() {
+    const apiKey = 'YOUR_API_KEY'; // 替换为你的API密钥
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=Beijing&appid=${apiKey}&units=metric`;
+    
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('weatherStatus').textContent = `${data.main.temp}°C, ${data.weather[0].description}`;
+      })
+      .catch(() => {
+        document.getElementById('weatherStatus').textContent = '无法获取天气信息';
+      });
+  }
+
+  getWeather(); // 页面加载时获取天气
+</script>
 </body>
 </html>
